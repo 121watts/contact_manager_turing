@@ -65,9 +65,16 @@ describe 'the person view', type: :feature do
     person.email_addresses.create(address: 'yourmom456@aol.com')
     visit person_path(person)
   end
+
   it 'has list items for each address' do
     person.email_addresses.each do |email|
       expect(page).to have_selector('li', text: email.address)
+    end
+  end
+
+  it 'has an email address link' do
+      person.email_addresses.each do |email|
+      expect(page).to have_link('edit', href: edit_email_address_path(email))
     end
   end
 
