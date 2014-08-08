@@ -2,20 +2,14 @@ require 'rails_helper'
 
 RSpec.describe EmailAddressesController, :type => :controller do
 
-  # This should return the minimal set of attributes required to create a valid
-  # EmailAddress. As you add validations to EmailAddress, be sure to
-  # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    { address: 'SomeString', person_id: 1}
   }
 
   let(:invalid_attributes) {
     skip("Add a hash of attributes invalid for your model")
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # EmailAddressesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
   describe "GET index" do
@@ -51,6 +45,10 @@ RSpec.describe EmailAddressesController, :type => :controller do
 
   describe "POST create" do
     describe "with valid params" do
+
+      let(:alice) { Person.create(first_name: 'Alice', last_name: 'Smith')}
+      let(:valid_attributes) { {address: 'me@example.com', person_id: alice.id} }
+
       it "creates a new EmailAddress" do
         expect {
           post :create, {:email_address => valid_attributes}, valid_session
@@ -64,10 +62,8 @@ RSpec.describe EmailAddressesController, :type => :controller do
       end
 
       it "redirects to the created email_address' person" do
-        watts = Person.create(first_name: 'Watts', last_name: 'Watkins')
-        valid_attributes = {address: 'yourmomisfat@aol.com', person_id: watts.id}
         post :create, {:email_address => valid_attributes}, valid_session
-        expect(response).to redirect_to(watts)
+        expect(response).to redirect_to(alice)
       end
     end
 
@@ -86,13 +82,13 @@ RSpec.describe EmailAddressesController, :type => :controller do
 
   describe "PUT update" do
     describe "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
+
+      let(:bob) { Person.create(first_name: 'Bob', last_name: 'Jones') }
+      let(:valid_attributes) { {address: 'me@example.com', person_id: bob.id} }
 
       it "updates the requested email_address" do
         email_address = EmailAddress.create! valid_attributes
-        put :update, {:id => email_address.to_param, :email_address => new_attributes}, valid_session
+        put :update, {:id => email_address.to_param, :email_address => valid_attributes}, valid_session
         email_address.reload
         skip("Add assertions for updated state")
       end
@@ -106,7 +102,7 @@ RSpec.describe EmailAddressesController, :type => :controller do
       it "redirects to the email_address" do
         email_address = EmailAddress.create! valid_attributes
         put :update, {:id => email_address.to_param, :email_address => valid_attributes}, valid_session
-        expect(response).to redirect_to(email_address)
+        expect(response).to redirect_to(bob)
       end
     end
 
@@ -126,6 +122,10 @@ RSpec.describe EmailAddressesController, :type => :controller do
   end
 
   describe "DELETE destroy" do
+
+    let(:bob) { Person.create(first_name: 'Bob', last_name: 'Jones') }
+    let(:valid_attributes) { {address: 'me@me.com', person_id: bob.id} }
+
     it "destroys the requested email_address" do
       email_address = EmailAddress.create! valid_attributes
       expect {
@@ -136,7 +136,7 @@ RSpec.describe EmailAddressesController, :type => :controller do
     it "redirects to the email_addresses list" do
       email_address = EmailAddress.create! valid_attributes
       delete :destroy, {:id => email_address.to_param}, valid_session
-      expect(response).to redirect_to(email_addresses_url)
+      expect(response).to redirect_to(bob)
     end
   end
 
